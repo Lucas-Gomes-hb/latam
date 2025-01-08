@@ -1,4 +1,6 @@
 import pandas as pd
+
+from pydantic  import BaseModel
 from datetime import datetime
 from typing import Tuple, Union, List
 from sklearn.ensemble import RandomForestClassifier
@@ -21,22 +23,38 @@ class DelayModel:
             target_column (str, optional): if set, the target is returned.
 
         Returns:
-            Tuple[pd.DataFrame, pd.DataFrame]: features and target.
+            Tuple[pd.DataFrame, pd.DataFrame]: features and target if target_column is provided.
             or
-            pd.DataFrame: features.
+            pd.DataFrame: features only.
         """
-        # Cria colunas adicionais necessárias para o modelo.
-        data['PeriodDay'] = data['Fecha-I'].apply(self._get_period_day)
-        data['HighSeason'] = data['Fecha-I'].apply(self._is_high_season)
-        data['MinDiff'] = data.apply(self._get_min_diff, axis=1)
+        # Create high_season column
+        data['high_season'] = data['Fecha-I'].apply(self.is_high_season)
 
-        # Remove colunas irrelevantes e separa features/target, se necessário.
-        features = data.drop(columns=['Fecha-I', 'Fecha-O', target_column] if target_column else ['Fecha-I', 'Fecha-O'])
-        
+        # Create min_diff column (in minutes)
+        data['min_diff'] = data.apply(self.get_min_diff, axis=1)
+
+        # Create period_day column
+        data['period_day'] = data['Fecha-I'].apply(self.get_period_day)
+
+        # Create delay column
+        data['delay'] = (data['min_diff'] > 15).astype(int)
+
+        # Columns to keep for training/prediction
+        columns_to_keep = [
+            'high_season', 'min_diff', 'period_day', 'DIANOM', 
+            'TIPOVUELO', 'OPERA', 'SIGLAORI', 'SIGLADES'
+        ]
+
+        features = data[columns_to_keep]
+
         if target_column:
+            if target_column not in data.columns:
+                raise KeyError(f"Target column '{target_column}' not found in data.")
             target = data[target_column]
             return features, target
+
         return features
+
 
     def fit(
         self,
@@ -67,56 +85,43 @@ class DelayModel:
         """
         return self._model.predict(features).tolist()
 
-    # Métodos auxiliares privados.
-    def _get_period_day(self, date: str) -> str:
-        """
-        Calculate the period of the day from a datetime string.
-        """
-        date_time = datetime.strptime(date, '%Y-%m-%d %H:%M:%S').time()
-        morning_min = datetime.strptime("05:00", '%H:%M').time()
-        morning_max = datetime.strptime("11:59", '%H:%M').time()
-        afternoon_min = datetime.strptime("12:00", '%H:%M').time()
-        afternoon_max = datetime.strptime("18:59", '%H:%M').time()
-        evening_min = datetime.strptime("19:00", '%H:%M').time()
-        evening_max = datetime.strptime("23:59", '%H:%M').time()
-        night_min = datetime.strptime("00:00", '%H:%M').time()
-        night_max = datetime.strptime("04:59", '%H:%M').time()
-        
-        if morning_min <= date_time <= morning_max:
-            return 'mañana'
-        elif afternoon_min <= date_time <= afternoon_max:
-            return 'tarde'
-        elif evening_min <= date_time <= evening_max or night_min <= date_time <= night_max:
-            return 'noche'
+    def get_period_day(self, fecha: str) -> str:
+        hour = pd.to_datetime(fecha).hour
+        if 5 <= hour <= 11:
+            return 'morning'
+        elif 12 <= hour <= 18:
+            return 'afternoon'
+        else:
+            return 'night'
 
-    def _is_high_season(self, fecha: str) -> int:
-        """
-        Determine if a given date is in the high season.
-        """
-        fecha_año = int(fecha.split('-')[0])
-        fecha = datetime.strptime(fecha, '%Y-%m-%d %H:%M:%S')
-        
-        range1_min = datetime.strptime('15-Dec', '%d-%b').replace(year=fecha_año)
-        range1_max = datetime.strptime('31-Dec', '%d-%b').replace(year=fecha_año)
-        range2_min = datetime.strptime('1-Jan', '%d-%b').replace(year=fecha_año)
-        range2_max = datetime.strptime('3-Mar', '%d-%b').replace(year=fecha_año)
-        range3_min = datetime.strptime('15-Jul', '%d-%b').replace(year=fecha_año)
-        range3_max = datetime.strptime('31-Jul', '%d-%b').replace(year=fecha_año)
-        range4_min = datetime.strptime('11-Sep', '%d-%b').replace(year=fecha_año)
-        range4_max = datetime.strptime('30-Sep', '%d-%b').replace(year=fecha_año)
-        
-        if (range1_min <= fecha <= range1_max or
-            range2_min <= fecha <= range2_max or
-            range3_min <= fecha <= range3_max or
-            range4_min <= fecha <= range4_max):
+    def is_high_season(self, fecha: str) -> int:
+        date = pd.to_datetime(fecha)
+        if ((date.month == 12 and date.day >= 15) or
+            (date.month == 1 or date.month == 2) or
+            (date.month == 3 and date.day <= 3) or
+            (date.month == 7 and date.day >= 15 and date.day <= 31) or
+            (date.month == 9 and date.day >= 11 and date.day <= 30)):
             return 1
         return 0
 
-    def _get_min_diff(self, row: pd.Series) -> float:
-        """
-        Calculate the time difference in minutes between two timestamps.
-        """
-        fecha_o = datetime.strptime(row['Fecha-O'], '%Y-%m-%d %H:%M:%S')
-        fecha_i = datetime.strptime(row['Fecha-I'], '%Y-%m-%d %H:%M:%S')
-        min_diff = (fecha_o - fecha_i).total_seconds() / 60
-        return min_diff
+
+    def get_min_diff(self, row: pd.Series) -> int:
+        date_i = pd.to_datetime(row['Fecha-I'])
+        date_o = pd.to_datetime(row['Fecha-O'])
+        return int((date_o - date_i).total_seconds() / 60)
+
+
+class FlightData(BaseModel):
+    Fecha_I: str
+    Fecha_O: str
+    DIANOM: str
+    TIPOVUELO: str
+    OPERA: str
+    SIGLAORI: str
+    SIGLADES: str
+
+class PredictRequest(BaseModel):
+    flights: List[FlightData]
+
+class PredictResponse(BaseModel):
+    predictions: List[int]

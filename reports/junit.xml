@@ -1,29 +1,268 @@
-<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="4" skipped="0" tests="4" time="40.968" timestamp="2025-01-07T23:16:27.187536" hostname="Contru"><testcase classname="tests.model.test_model.TestModel" name="test_model_fit" time="0.028"><failure message="TypeError: DelayModel.__init__() missing 1 required positional argument: 'data'">self = &lt;tests.model.test_model.TestModel testMethod=test_model_fit&gt;
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="4" skipped="0" tests="4" time="1336.084" timestamp="2025-01-07T23:24:12.671708" hostname="Contru"><testcase classname="tests.model.test_model.TestModel" name="test_model_fit" time="306.362"><failure message="KeyError: &quot;['delay'] not found in axis&quot;">self = &lt;tests.model.test_model.TestModel testMethod=test_model_fit&gt;
 
-    def setUp(self) -&gt; None:
-        super().setUp()
-&gt;       self.model = DelayModel()
-E       TypeError: DelayModel.__init__() missing 1 required positional argument: 'data'
+    def test_model_fit(
+        self
+    ):
+&gt;       features, target = self.model.preprocess(
+            data=self.data,
+            target_column="delay"
+        )
 
-tests\model\test_model.py:31: TypeError</failure></testcase><testcase classname="tests.model.test_model.TestModel" name="test_model_predict" time="0.007"><failure message="TypeError: DelayModel.__init__() missing 1 required positional argument: 'data'">self = &lt;tests.model.test_model.TestModel testMethod=test_model_predict&gt;
+tests\model\test_model.py:67: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+challenge\model.py:34: in preprocess
+    features = data.drop(columns=['Fecha-I', 'Fecha-O', target_column] if target_column else ['Fecha-I', 'Fecha-O'])
+..\..\..\AppData\Roaming\Python\Python312\site-packages\pandas\core\frame.py:5581: in drop
+    return super().drop(
+..\..\..\AppData\Roaming\Python\Python312\site-packages\pandas\core\generic.py:4788: in drop
+    obj = obj._drop_axis(labels, axis, level=level, errors=errors)
+..\..\..\AppData\Roaming\Python\Python312\site-packages\pandas\core\generic.py:4830: in _drop_axis
+    new_axis = axis.drop(labels, errors=errors)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-    def setUp(self) -&gt; None:
-        super().setUp()
-&gt;       self.model = DelayModel()
-E       TypeError: DelayModel.__init__() missing 1 required positional argument: 'data'
+self = Index(['Fecha-I', 'Vlo-I', 'Ori-I', 'Des-I', 'Emp-I', 'Fecha-O', 'Vlo-O',
+       'Ori-O', 'Des-O', 'Emp-O', 'DIA', 'ME...NOM', 'TIPOVUELO',
+       'OPERA', 'SIGLAORI', 'SIGLADES', 'PeriodDay', 'HighSeason', 'MinDiff'],
+      dtype='object')
+labels = array(['Fecha-I', 'Fecha-O', 'delay'], dtype=object), errors = 'raise'
 
-tests\model\test_model.py:31: TypeError</failure></testcase><testcase classname="tests.model.test_model.TestModel" name="test_model_preprocess_for_serving" time="0.012"><failure message="TypeError: DelayModel.__init__() missing 1 required positional argument: 'data'">self = &lt;tests.model.test_model.TestModel testMethod=test_model_preprocess_for_serving&gt;
+    def drop(
+        self,
+        labels: Index | np.ndarray | Iterable[Hashable],
+        errors: IgnoreRaise = "raise",
+    ) -&gt; Index:
+        """
+        Make new Index with passed list of labels deleted.
+    
+        Parameters
+        ----------
+        labels : array-like or scalar
+        errors : {'ignore', 'raise'}, default 'raise'
+            If 'ignore', suppress error and existing labels are dropped.
+    
+        Returns
+        -------
+        Index
+            Will be same type as self, except for RangeIndex.
+    
+        Raises
+        ------
+        KeyError
+            If not all of the labels are found in the selected axis
+    
+        Examples
+        --------
+        &gt;&gt;&gt; idx = pd.Index(['a', 'b', 'c'])
+        &gt;&gt;&gt; idx.drop(['a'])
+        Index(['b', 'c'], dtype='object')
+        """
+        if not isinstance(labels, Index):
+            # avoid materializing e.g. RangeIndex
+            arr_dtype = "object" if self.dtype == "object" else None
+            labels = com.index_labels_to_array(labels, dtype=arr_dtype)
+    
+        indexer = self.get_indexer_for(labels)
+        mask = indexer == -1
+        if mask.any():
+            if errors != "ignore":
+&gt;               raise KeyError(f"{labels[mask].tolist()} not found in axis")
+E               KeyError: "['delay'] not found in axis"
 
-    def setUp(self) -&gt; None:
-        super().setUp()
-&gt;       self.model = DelayModel()
-E       TypeError: DelayModel.__init__() missing 1 required positional argument: 'data'
+..\..\..\AppData\Roaming\Python\Python312\site-packages\pandas\core\indexes\base.py:7070: KeyError</failure></testcase><testcase classname="tests.model.test_model.TestModel" name="test_model_predict" time="328.757"><failure message="sklearn.exceptions.NotFittedError: This RandomForestClassifier instance is not fitted yet. Call 'fit' with appropriate arguments before using this estimator.">self = &lt;tests.model.test_model.TestModel testMethod=test_model_predict&gt;
 
-tests\model\test_model.py:31: TypeError</failure></testcase><testcase classname="tests.model.test_model.TestModel" name="test_model_preprocess_for_training" time="0.013"><failure message="TypeError: DelayModel.__init__() missing 1 required positional argument: 'data'">self = &lt;tests.model.test_model.TestModel testMethod=test_model_preprocess_for_training&gt;
+    def test_model_predict(
+        self
+    ):
+        features = self.model.preprocess(
+            data=self.data
+        )
+    
+&gt;       predicted_targets = self.model.predict(
+            features=features
+        )
 
-    def setUp(self) -&gt; None:
-        super().setUp()
-&gt;       self.model = DelayModel()
-E       TypeError: DelayModel.__init__() missing 1 required positional argument: 'data'
+tests\model\test_model.py:98: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+challenge\model.py:68: in predict
+    return self._model.predict(features).tolist()
+..\..\..\AppData\Roaming\Python\Python312\site-packages\sklearn\ensemble\_forest.py:904: in predict
+    proba = self.predict_proba(X)
+..\..\..\AppData\Roaming\Python\Python312\site-packages\sklearn\ensemble\_forest.py:944: in predict_proba
+    check_is_fitted(self)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-tests\model\test_model.py:31: TypeError</failure></testcase></testsuite></testsuites>
+estimator = RandomForestClassifier(), attributes = None
+
+    def check_is_fitted(estimator, attributes=None, *, msg=None, all_or_any=all):
+        """Perform is_fitted validation for estimator.
+    
+        Checks if the estimator is fitted by verifying the presence of
+        fitted attributes (ending with a trailing underscore) and otherwise
+        raises a :class:`~sklearn.exceptions.NotFittedError` with the given message.
+    
+        If an estimator does not set any attributes with a trailing underscore, it
+        can define a ``__sklearn_is_fitted__`` method returning a boolean to
+        specify if the estimator is fitted or not. See
+        :ref:`sphx_glr_auto_examples_developing_estimators_sklearn_is_fitted.py`
+        for an example on how to use the API.
+    
+        If no `attributes` are passed, this fuction will pass if an estimator is stateless.
+        An estimator can indicate it's stateless by setting the `requires_fit` tag. See
+        :ref:`estimator_tags` for more information. Note that the `requires_fit` tag
+        is ignored if `attributes` are passed.
+    
+        Parameters
+        ----------
+        estimator : estimator instance
+            Estimator instance for which the check is performed.
+    
+        attributes : str, list or tuple of str, default=None
+            Attribute name(s) given as string or a list/tuple of strings
+            Eg.: ``["coef_", "estimator_", ...], "coef_"``
+    
+            If `None`, `estimator` is considered fitted if there exist an
+            attribute that ends with a underscore and does not start with double
+            underscore.
+    
+        msg : str, default=None
+            The default error message is, "This %(name)s instance is not fitted
+            yet. Call 'fit' with appropriate arguments before using this
+            estimator."
+    
+            For custom messages if "%(name)s" is present in the message string,
+            it is substituted for the estimator name.
+    
+            Eg. : "Estimator, %(name)s, must be fitted before sparsifying".
+    
+        all_or_any : callable, {all, any}, default=all
+            Specify whether all or any of the given attributes must exist.
+    
+        Raises
+        ------
+        TypeError
+            If the estimator is a class or not an estimator instance
+    
+        NotFittedError
+            If the attributes are not found.
+    
+        Examples
+        --------
+        &gt;&gt;&gt; from sklearn.linear_model import LogisticRegression
+        &gt;&gt;&gt; from sklearn.utils.validation import check_is_fitted
+        &gt;&gt;&gt; from sklearn.exceptions import NotFittedError
+        &gt;&gt;&gt; lr = LogisticRegression()
+        &gt;&gt;&gt; try:
+        ...     check_is_fitted(lr)
+        ... except NotFittedError as exc:
+        ...     print(f"Model is not fitted yet.")
+        Model is not fitted yet.
+        &gt;&gt;&gt; lr.fit([[1, 2], [1, 3]], [1, 0])
+        LogisticRegression()
+        &gt;&gt;&gt; check_is_fitted(lr)
+        """
+        if isclass(estimator):
+            raise TypeError("{} is a class, not an instance.".format(estimator))
+        if msg is None:
+            msg = (
+                "This %(name)s instance is not fitted yet. Call 'fit' with "
+                "appropriate arguments before using this estimator."
+            )
+    
+        if not hasattr(estimator, "fit"):
+            raise TypeError("%s is not an estimator instance." % (estimator))
+    
+        tags = get_tags(estimator)
+    
+        if not tags.requires_fit and attributes is None:
+            return
+    
+        if not _is_fitted(estimator, attributes, all_or_any):
+&gt;           raise NotFittedError(msg % {"name": type(estimator).__name__})
+E           sklearn.exceptions.NotFittedError: This RandomForestClassifier instance is not fitted yet. Call 'fit' with appropriate arguments before using this estimator.
+
+..\..\..\AppData\Roaming\Python\Python312\site-packages\sklearn\utils\validation.py:1757: NotFittedError</failure></testcase><testcase classname="tests.model.test_model.TestModel" name="test_model_preprocess_for_serving" time="319.387"><failure message="AssertionError: assert 19 == 10&#10; +  where 10 = len(['OPERA_Latin American Wings', 'MES_7', 'MES_10', 'OPERA_Grupo LATAM', 'MES_12', 'TIPOVUELO_I', ...])&#10; +    where ['OPERA_Latin American Wings', 'MES_7', 'MES_10', 'OPERA_Grupo LATAM', 'MES_12', 'TIPOVUELO_I', ...] = &lt;tests.model.test_model.TestModel testMethod=test_model_preprocess_for_serving&gt;.FEATURES_COLS">self = &lt;tests.model.test_model.TestModel testMethod=test_model_preprocess_for_serving&gt;
+
+    def test_model_preprocess_for_serving(
+        self
+    ):
+        features = self.model.preprocess(
+            data=self.data
+        )
+    
+        assert isinstance(features, pd.DataFrame)
+&gt;       assert features.shape[1] == len(self.FEATURES_COLS)
+E       AssertionError: assert 19 == 10
+E        +  where 10 = len(['OPERA_Latin American Wings', 'MES_7', 'MES_10', 'OPERA_Grupo LATAM', 'MES_12', 'TIPOVUELO_I', ...])
+E        +    where ['OPERA_Latin American Wings', 'MES_7', 'MES_10', 'OPERA_Grupo LATAM', 'MES_12', 'TIPOVUELO_I', ...] = &lt;tests.model.test_model.TestModel testMethod=test_model_preprocess_for_serving&gt;.FEATURES_COLS
+
+tests\model\test_model.py:60: AssertionError</failure></testcase><testcase classname="tests.model.test_model.TestModel" name="test_model_preprocess_for_training" time="349.584"><failure message="KeyError: &quot;['delay'] not found in axis&quot;">self = &lt;tests.model.test_model.TestModel testMethod=test_model_preprocess_for_training&gt;
+
+    def test_model_preprocess_for_training(
+        self
+    ):
+&gt;       features, target = self.model.preprocess(
+            data=self.data,
+            target_column="delay"
+        )
+
+tests\model\test_model.py:38: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+challenge\model.py:34: in preprocess
+    features = data.drop(columns=['Fecha-I', 'Fecha-O', target_column] if target_column else ['Fecha-I', 'Fecha-O'])
+..\..\..\AppData\Roaming\Python\Python312\site-packages\pandas\core\frame.py:5581: in drop
+    return super().drop(
+..\..\..\AppData\Roaming\Python\Python312\site-packages\pandas\core\generic.py:4788: in drop
+    obj = obj._drop_axis(labels, axis, level=level, errors=errors)
+..\..\..\AppData\Roaming\Python\Python312\site-packages\pandas\core\generic.py:4830: in _drop_axis
+    new_axis = axis.drop(labels, errors=errors)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Index(['Fecha-I', 'Vlo-I', 'Ori-I', 'Des-I', 'Emp-I', 'Fecha-O', 'Vlo-O',
+       'Ori-O', 'Des-O', 'Emp-O', 'DIA', 'ME...NOM', 'TIPOVUELO',
+       'OPERA', 'SIGLAORI', 'SIGLADES', 'PeriodDay', 'HighSeason', 'MinDiff'],
+      dtype='object')
+labels = array(['Fecha-I', 'Fecha-O', 'delay'], dtype=object), errors = 'raise'
+
+    def drop(
+        self,
+        labels: Index | np.ndarray | Iterable[Hashable],
+        errors: IgnoreRaise = "raise",
+    ) -&gt; Index:
+        """
+        Make new Index with passed list of labels deleted.
+    
+        Parameters
+        ----------
+        labels : array-like or scalar
+        errors : {'ignore', 'raise'}, default 'raise'
+            If 'ignore', suppress error and existing labels are dropped.
+    
+        Returns
+        -------
+        Index
+            Will be same type as self, except for RangeIndex.
+    
+        Raises
+        ------
+        KeyError
+            If not all of the labels are found in the selected axis
+    
+        Examples
+        --------
+        &gt;&gt;&gt; idx = pd.Index(['a', 'b', 'c'])
+        &gt;&gt;&gt; idx.drop(['a'])
+        Index(['b', 'c'], dtype='object')
+        """
+        if not isinstance(labels, Index):
+            # avoid materializing e.g. RangeIndex
+            arr_dtype = "object" if self.dtype == "object" else None
+            labels = com.index_labels_to_array(labels, dtype=arr_dtype)
+    
+        indexer = self.get_indexer_for(labels)
+        mask = indexer == -1
+        if mask.any():
+            if errors != "ignore":
+&gt;               raise KeyError(f"{labels[mask].tolist()} not found in axis")
+E               KeyError: "['delay'] not found in axis"
+
+..\..\..\AppData\Roaming\Python\Python312\site-packages\pandas\core\indexes\base.py:7070: KeyError</failure></testcase></testsuite></testsuites>
