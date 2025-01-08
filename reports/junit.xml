@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="4" skipped="0" tests="4" time="40.968" timestamp="2025-01-07T23:16:27.187536" hostname="Contru"><testcase classname="tests.model.test_model.TestModel" name="test_model_fit" time="0.028"><failure message="TypeError: DelayModel.__init__() missing 1 required positional argument: 'data'">self = &lt;tests.model.test_model.TestModel testMethod=test_model_fit&gt;
+
+    def setUp(self) -&gt; None:
+        super().setUp()
+&gt;       self.model = DelayModel()
+E       TypeError: DelayModel.__init__() missing 1 required positional argument: 'data'
+
+tests\model\test_model.py:31: TypeError</failure></testcase><testcase classname="tests.model.test_model.TestModel" name="test_model_predict" time="0.007"><failure message="TypeError: DelayModel.__init__() missing 1 required positional argument: 'data'">self = &lt;tests.model.test_model.TestModel testMethod=test_model_predict&gt;
+
+    def setUp(self) -&gt; None:
+        super().setUp()
+&gt;       self.model = DelayModel()
+E       TypeError: DelayModel.__init__() missing 1 required positional argument: 'data'
+
+tests\model\test_model.py:31: TypeError</failure></testcase><testcase classname="tests.model.test_model.TestModel" name="test_model_preprocess_for_serving" time="0.012"><failure message="TypeError: DelayModel.__init__() missing 1 required positional argument: 'data'">self = &lt;tests.model.test_model.TestModel testMethod=test_model_preprocess_for_serving&gt;
+
+    def setUp(self) -&gt; None:
+        super().setUp()
+&gt;       self.model = DelayModel()
+E       TypeError: DelayModel.__init__() missing 1 required positional argument: 'data'
+
+tests\model\test_model.py:31: TypeError</failure></testcase><testcase classname="tests.model.test_model.TestModel" name="test_model_preprocess_for_training" time="0.013"><failure message="TypeError: DelayModel.__init__() missing 1 required positional argument: 'data'">self = &lt;tests.model.test_model.TestModel testMethod=test_model_preprocess_for_training&gt;
+
+    def setUp(self) -&gt; None:
+        super().setUp()
+&gt;       self.model = DelayModel()
+E       TypeError: DelayModel.__init__() missing 1 required positional argument: 'data'
+
+tests\model\test_model.py:31: TypeError</failure></testcase></testsuite></testsuites>
