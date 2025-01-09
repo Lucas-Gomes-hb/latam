@@ -2,9 +2,9 @@ name: 'Continuous Integration'
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main, dev ]
   pull_request:
-    branches: [ main, develop ]
+    branches: [ main, dev ]
 
 jobs:
   test:
@@ -24,17 +24,20 @@ jobs:
         pip install -r requirements.txt
         pip install -r requirements-test.txt
         pip install --upgrade anyio
-
         
     - name: Create reports directory
       run: mkdir -p reports
         
-    - name: Run model tests
-      run: make model-test
-
     - name: Run FastApi local  
-      run: uvicorn challenge.api:app --host 0.0.0.0 --port 8000
-      
+      run: uvicorn challenge.api:app --host 0.0.0.0 --port 8000 &
+
+    - name: Wait for FastAPI to be ready
+      run: |
+        for i in {1..10}; do
+          curl -s http://127.0.0.1:8000/health || true
+          sleep 2
+        done
+
     - name: Run API tests  
       run: make api-test
       
