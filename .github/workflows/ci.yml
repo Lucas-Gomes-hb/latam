@@ -31,6 +31,9 @@ jobs:
         
     - name: Run model tests
       run: make model-test
+
+    - name: Run FastApi local  
+      run: uvicorn challenge.api:app --host 0.0.0.0 --port 8000
       
     - name: Run API tests  
       run: make api-test
