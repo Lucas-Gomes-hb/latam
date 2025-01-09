@@ -1,1 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="0" skipped="0" tests="4" time="20.592" timestamp="2025-01-09T00:23:54.003205" hostname="Contru"><testcase classname="tests.api.test_api.TestBatchPipeline" name="test_should_failed_unkown_column_1" time="0.071" /><testcase classname="tests.api.test_api.TestBatchPipeline" name="test_should_failed_unkown_column_2" time="0.035" /><testcase classname="tests.api.test_api.TestBatchPipeline" name="test_should_failed_unkown_column_3" time="0.032" /><testcase classname="tests.api.test_api.TestBatchPipeline" name="test_should_get_predict" time="0.457" /></testsuite></testsuites>
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="1" failures="0" skipped="0" tests="1" time="1.463" timestamp="2025-01-09T02:38:38.223705" hostname="Contru"><testcase classname="" name="tests.model.test_model" time="0.000"><error message="collection failure">ImportError while importing test module 'C:\Users\lucas\Documents\Latam\challenge_MLE\tests\model\test_model.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\Python312\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+tests\model\test_model.py:2: in &lt;module&gt;
+    import pandas as pd
+E   ModuleNotFoundError: No module named 'pandas'</error></testcase></testsuite></testsuites>
