@@ -29,7 +29,7 @@ jobs:
       run: mkdir -p reports
         
     - name: Run FastApi local  
-      run: uvicorn challenge.api:app --host 0.0.0.0 --port 8000 &
+      run: uvicorn challenge.api:app --port 8000 --log-level debug &
 
     - name: Wait for FastAPI to be ready
       run: |
