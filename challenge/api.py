@@ -33,7 +33,11 @@ async def get_health() -> dict:
 async def post_predict(request: PredictRequest) -> dict:
     try:
         # Converte os dados da requisição para DataFrame
-        flight_dicts = [flight.model_dump() for flight in request.flights]
+        try:
+            flight_dicts = [flight.model_dump() for flight in request.flights]
+        except AttributeError:
+            flight_dicts = [flight.dict() for flight in request.flights]
+
         data = pd.DataFrame(flight_dicts)
         
         # Validações
